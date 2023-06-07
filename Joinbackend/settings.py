@@ -25,8 +25,21 @@ SECRET_KEY = 'django-insecure-47w_zt&ao$lj@)b&&mr#%faa(28qbtyfm1c^)#r2%ei6z-3@=8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost', '127.0.0.1',  'localhost:5519', '127.0.0.1:5519'
+]
 
+# Erlaube alle Ursprünge (Domains)
+CORS_ORIGIN_ALLOW_ALL = True
+
+# CORS_ORIGIN_WHITELIST = [
+# Beispiel: Hier die entsprechende Adresse deines Frontend-Servers eintragen
+# 'http://localhost:5519',
+# 'http://127.0.0.1:5519'
+# ]
+
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = None
 
 # Application definition
 
@@ -38,7 +51,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'board'
+    'board',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -49,7 +63,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
+
 
 ROOT_URLCONF = 'Joinbackend.urls'
 

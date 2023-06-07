@@ -1,24 +1,23 @@
 from django.shortcuts import render
 
 # Create your views here.
-from django.http import JsonResponse
-from django.views import View
-from .models import Todo
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from board.serializers import TodoSerializer
+from board.models import Todo
 
 
-class TodoListView(View):
+class TodoListView(APIView):
+
     def get(self, request):
         todos = Todo.objects.all()
-        allTasks = []
-        for todo in todos:
-            allTasks.append({
-                'created_at': todo.created_at,
-                'title': todo.title,
-                'category': todo.category,
-                'description': todo.description,
-                'due_date': todo.due_date,
-                'urgency': todo.urgency,
-                'assigned_user': todo.assigned_user.username,
-                'status': todo.status,
-            })
-        return JsonResponse(allTasks, safe=False)
+        serializer = TodoSerializer(todos, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = TodoSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
