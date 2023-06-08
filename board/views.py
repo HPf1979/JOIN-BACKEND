@@ -6,9 +6,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from board.serializers import TodoSerializer
 from board.models import Todo
+# from django.views.decorators.csrf import csrf_exempt
+from rest_framework import status
 
 
+# @csrf_exempt
 class TodoListView(APIView):
+    allowed_methods = ['get', 'post']
 
     def get(self, request):
         todos = Todo.objects.all()
