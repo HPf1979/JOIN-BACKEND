@@ -13,4 +13,4 @@ class Todo(models.Model):
     # urgency = models.CharField(max_length=500)
     # assigned_user = models.ForeignKey(
     # settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    status = models.CharField(max_length=500)
+    # status = models.CharField(max_length=500)
