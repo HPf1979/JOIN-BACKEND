@@ -1,11 +1,6 @@
 from django.contrib import admin
-from .models import Todo
-
-
-# class TodoAdmin (admin.ModelAdmin):
-#   list_display = ('created_at', 'description', 'user', 'status')
-
+from .models import Todo, UserProfile
 
 # admin.site.register(Todo, TodoAdmin)
-
+admin.site.register(UserProfile)
 admin.site.register(Todo)
