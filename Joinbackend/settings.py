@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-47w_zt&ao$lj@)b&&mr#%faa(28qbtyfm1c^)#r2%ei6z-3@=8
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost', '127.0.0.1',  'localhost:5519', '127.0.0.1:5519', 'https://herlina.pythonanywhere.com/'
+    'localhost', '127.0.0.1',  'localhost:5519', '127.0.0.1:5519', 'herlina.pythonanywhere.com'
 ]
 
 # Erlaube alle Ursprünge (Domains)
