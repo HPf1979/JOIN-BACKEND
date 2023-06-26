@@ -26,15 +26,3 @@ class Todo(models.Model):
 
     def __str__(self):
         return self.title
-
-
-""" class Database(models.Model):
-    id = models.IntegerField(primary_key=True)
-    username = models.CharField(max_length=255)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    email = models.EmailField()
-    color = models.CharField(max_length=255, null=True)
-
-    def __str__(self):
-        return self.username """

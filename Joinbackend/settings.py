@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -89,12 +90,31 @@ WSGI_APPLICATION = 'Joinbackend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
+""" DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+} """
+
+# Datenbankkonfiguration für die lokale SQLite-Datenbank
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 }
+
+# Datenbankkonfiguration für die MySQL-Datenbank auf PythonAnywhere
+if 'LIVE' in os.environ:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'join-pythonanywhere',
+        'USER': 'Herlina',
+        'PASSWORD': 'herlina',
+        'HOST': 'mysql.server',
+        'PORT': '',
+    }
 
 
 # Password validation
