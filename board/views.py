@@ -10,6 +10,7 @@ from board.serializers import TodoSerializer
 from board.serializers import UserSerializer
 from board.models import Todo, UserProfile
 from django.views.decorators.csrf import csrf_exempt
+from django.views import View
 from rest_framework import status
 from django.contrib.auth.models import User
 from django.http import JsonResponse
@@ -23,9 +24,12 @@ from rest_framework import generics
 from rest_framework.generics import UpdateAPIView
 
 
-@csrf_exempt  # Um den CSRF-Schutz vorübergehend zu deaktivieren
-def signup(request):
-    if request.method == 'POST':
+# @csrf_exempt  # Um den CSRF-Schutz vorübergehend zu deaktivieren
+# def signup(request):
+class SignupView(APIView):
+    """ if request.method == 'POST': """
+    @csrf_exempt  # Um den CSRF-Schutz vorübergehend zu deaktivieren
+    def post(self, request):
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         email = request.POST.get('email')
@@ -48,13 +52,13 @@ def signup(request):
         user_profile = UserProfile.objects.create(user=user, color=color)
         # user.id abrufen und speichern
         user_id = user.id
-        user.save
+        user.save()
 
  # Antworte mit einer JSON-Antwort, um den Erfolg anzuzeigen
         return JsonResponse({'success': True, 'user_id': user_id})
 
     # Wenn die Anfrage keine POST-Methode ist, antworte mit einem Fehler
-    return JsonResponse({'error': 'Invalid request method'})
+        return JsonResponse({'error': 'Invalid request method'})
 
 
 class UserAPIView(APIView):
@@ -64,7 +68,7 @@ class UserAPIView(APIView):
         return Response(serializer.data)
 
 
-class login_user(ObtainAuthToken):
+class Login_user(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(
             data=request.data, context={'request': request})
@@ -114,23 +118,6 @@ class TodoDetailView(APIView):
         except Todo.DoesNotExist:
             return Response({'error': 'Task not found'}, status=status.HTTP_404_NOT_FOUND)
 
-
-class TodoStatusUpdateView(APIView):
-    allowed_methods = ['patch']
-
-    def patch(self, request, pk):
-        try:
-            task = Todo.objects.get(pk=pk)
-            task.status = request.data.get('status')
-            task.save()
-            return Response({'success': 'Task updated successfully'})
-        except Todo.DoesNotExist:
-            return Response({'error': 'Task not found'}, status=status.HTTP_404_NOT_FOUND)
-
-
-class TodoUpdateView(APIView):
-    allowed_methods = ['get', 'post', 'patch']
-
     def patch(self, request, pk):
         try:
             task = Todo.objects.get(pk=pk)
@@ -138,6 +125,7 @@ class TodoUpdateView(APIView):
             task.category = request.data.get('category', task.category)
             task.description = request.data.get(
                 'description', task.description)
+            task.status = request.data.get('status')
             task.save()
             return Response({'success': 'Task updated successfully'})
         except Todo.DoesNotExist:
