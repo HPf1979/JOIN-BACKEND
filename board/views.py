@@ -88,7 +88,7 @@ class Login_user(ObtainAuthToken):
 
 
 class TodoListView(APIView):
-    allowed_methods = ['get', 'post', 'patch']
+    allowed_methods = ['get', 'post']
 
     def get(self, request):
         # Standardwert auf leeren String setzen, falls kein Status angegeben ist
@@ -110,6 +110,8 @@ class TodoListView(APIView):
 
 
 class TodoDetailView(APIView):
+    allowed_methods = ['patch']
+
     def delete(self, request, pk):
         try:
             task = Todo.objects.get(pk=pk)
