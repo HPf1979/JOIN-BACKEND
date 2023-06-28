@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+from django.db import connections
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,8 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-47w_zt&ao$lj@)b&&mr#%faa(28qbtyfm1c^)#r2%ei6z-3@=8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 
 ALLOWED_HOSTS = [
     'localhost', '127.0.0.1',  'localhost:5519', '127.0.0.1:5519', 'herlina.pythonanywhere.com'
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
     'board',
@@ -105,16 +107,19 @@ DATABASES = {
     }
 }
 
+# Überprüfung des Hostnamens für die MySQL-Datenbank auf PythonAnywhere
+# if 'LIVE' in os.environ:
+# if connections['default'].settings_dict['HOST'] == 'mysql.server':
+# print("Der Hostname ist korrekt konfiguriert.")
+# else:
+# print("Der Hostname ist nicht korrekt konfiguriert. Bitte überprüfen Sie Ihre Django-Konfiguration.")
 # Datenbankkonfiguration für die MySQL-Datenbank auf PythonAnywhere
-if 'LIVE' in os.environ:
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'join-pythonanywhere',
-        'USER': 'Herlina',
-        'PASSWORD': 'herlina',
-        'HOST': 'mysql.server',
-        'PORT': '',
-    }
+# DATABASES['default'] = {
+#  'ENGINE': 'django.db.backends.mysql',
+# 'NAME': 'join-pythonanywhere',
+# 'HOST': 'mysql.server',
+# 'PORT': '',
+# }
 
 
 # Password validation

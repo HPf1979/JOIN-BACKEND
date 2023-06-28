@@ -58,7 +58,7 @@ class SignupView(APIView):
         return JsonResponse({'success': True, 'user_id': user_id})
 
     # Wenn die Anfrage keine POST-Methode ist, antworte mit einem Fehler
-        return JsonResponse({'error': 'Invalid request method'})
+        """ return JsonResponse({'error': 'Invalid request method'}) """
 
 
 class UserAPIView(APIView):

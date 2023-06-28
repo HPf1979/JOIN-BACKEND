@@ -27,7 +27,7 @@ urlpatterns = [
     path('api/signup/', SignupView.as_view(), name='signup'),
     path('api/login/', Login_user.as_view(), name='api-login'),
     path('api/users/', UserAPIView.as_view(), name='user-api'),
-    path('api/todos/<int:pk>/', TodoDetailView.as_view(allowed_methods=['patch']),
+    path('api/todos/<int:pk>/', TodoDetailView.as_view(),
          name='todo-update-delete'),
     # path('api/todos/statusUpdate/<int:pk>/',
     # TodoStatusUpdateView.as_view(), name='todo-status-update'),
