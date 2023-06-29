@@ -1,3 +1,19 @@
+
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from rest_framework.response import Response
+from rest_framework import generics
+from rest_framework.generics import UpdateAPIView
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+
+from django.contrib.auth import authenticate, login
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
+
 from django.shortcuts import render
 
 # Create your views here.
@@ -9,56 +25,22 @@ from rest_framework.response import Response
 from board.serializers import TodoSerializer
 from board.serializers import UserSerializer
 from board.models import Todo, UserProfile
-from django.views.decorators.csrf import csrf_exempt
 from django.views import View
 from rest_framework import status
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-from django.contrib.auth import authenticate, login
-
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.serializers import AuthTokenSerializer
-from rest_framework.response import Response
-from rest_framework import generics
-from rest_framework.generics import UpdateAPIView
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 
-# @csrf_exempt  # Um den CSRF-Schutz vorübergehend zu deaktivieren
-# def signup(request):
 class SignupView(APIView):
-    """ if request.method == 'POST': """
-    @csrf_exempt  # Um den CSRF-Schutz vorübergehend zu deaktivieren
     def post(self, request):
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        color = request.POST.get('color')
-
-        # Überprüfe, ob bereits ein Benutzer mit der angegebenen E-Mail existiert
-        if User.objects.filter(email=email).exists():
-            return JsonResponse({'error': 'Benutzer mit dieser E-Mail existiert bereits.'})
-
-# Erstelle einen neuen Benutzer in der Datenbank
-        user = User.objects.create_user(
-            username=email,
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name
-        )
-# Speichere das Benutzerprofil mit der Farbe
-        user_profile = UserProfile.objects.create(user=user, color=color)
-        # user.id abrufen und speichern
-        user_id = user.id
-        user.save()
-
- # Antworte mit einer JSON-Antwort, um den Erfolg anzuzeigen
-        return JsonResponse({'success': True, 'user_id': user_id})
-
-    # Wenn die Anfrage keine POST-Methode ist, antworte mit einem Fehler
-        """ return JsonResponse({'error': 'Invalid request method'}) """
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            login(request, user)
+            return Response({'success': True, 'user_id': user.id}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserAPIView(APIView):
@@ -68,7 +50,9 @@ class UserAPIView(APIView):
         return Response(serializer.data)
 
 
-class Login_user(ObtainAuthToken):
+class LoginUser(ObtainAuthToken):
+    # class LoginUser(APIView):
+    @csrf_exempt
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(
             data=request.data, context={'request': request})
@@ -87,8 +71,43 @@ class Login_user(ObtainAuthToken):
         })
 
 
+""" @api_view(['GET'])
+@permission_classes([AllowAny])
+@ensure_csrf_cookie
+def get_csrf_token(request):
+    return Response({'detail': 'CSRF cookie set'})
+ """
+
+""" 
+class LoginUser(APIView):
+
+    def dispatch(self, request, *args, **kwargs):
+        request._dont_enforce_csrf_checks = True
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('email')
+        password = request.data.get('password')
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+
+            login(request, user)
+
+        # Token erstellen oder abrufen
+            token, created = Token.objects.get_or_create(user=user)
+
+            serializer = AuthTokenSerializer(user)
+            data = serializer.data
+            data['token'] = token.key
+
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            return Response({'non_field_errors': ['Unable to log in with provided credentials.']}, status=status.HTTP_400_BAD_REQUEST) """
+
+
 class TodoListView(APIView):
-    allowed_methods = ['get', 'post']
+    allowed_methods = ['get', 'post', 'patch']
 
     def get(self, request):
         # Standardwert auf leeren String setzen, falls kein Status angegeben ist
@@ -123,12 +142,10 @@ class TodoDetailView(APIView):
     def patch(self, request, pk):
         try:
             task = Todo.objects.get(pk=pk)
-            task.title = request.data.get('title', task.title)
-            task.category = request.data.get('category', task.category)
-            task.description = request.data.get(
-                'description', task.description)
-            task.status = request.data.get('status')
-            task.save()
-            return Response({'success': 'Task updated successfully'})
+            serializer = TodoSerializer(task, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'success': 'Task updated successfully'})
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Todo.DoesNotExist:
             return Response({'error': 'Task not found'}, status=status.HTTP_404_NOT_FOUND)

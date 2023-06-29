@@ -18,14 +18,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from board.views import TodoListView, SignupView, Login_user, UserAPIView, TodoDetailView
+from board.views import TodoListView, SignupView, LoginUser, UserAPIView, TodoDetailView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/todos/', TodoListView.as_view(), name='todos'),
     path('api/signup/', SignupView.as_view(), name='signup'),
-    path('api/login/', Login_user.as_view(), name='api-login'),
+    # path('api/login/', Login_user.as_view(), name='api-login'),
+    path('api/login/', LoginUser.as_view(), name='api-login'),
     path('api/users/', UserAPIView.as_view(), name='user-api'),
     path('api/todos/<int:pk>/', TodoDetailView.as_view(),
          name='todo-update-delete'),

@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 from django.db import connections
+from django.utils.deprecation import MiddlewareMixin
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,6 +27,7 @@ SECRET_KEY = 'django-insecure-47w_zt&ao$lj@)b&&mr#%faa(28qbtyfm1c^)#r2%ei6z-3@=8
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# dieser Wert auf False gesetzt ist, wenn die Anwendung in einer Produktionsumgebung zb.pythonanywhere bereitgestellt werden soll
 # DEBUG = False
 
 ALLOWED_HOSTS = [
@@ -34,6 +36,7 @@ ALLOWED_HOSTS = [
 
 # Erlaube alle Ursprünge (Domains)
 CORS_ORIGIN_ALLOW_ALL = True
+
 
 CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_SAMESITE = None
@@ -50,11 +53,15 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
+    # 'django_js_reverse',
     'board',
     'corsheaders'
 ]
 
 MIDDLEWARE = [
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -62,9 +69,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
 ]
 
 
@@ -99,7 +103,8 @@ WSGI_APPLICATION = 'Joinbackend.wsgi.application'
     }
 } """
 
-# Datenbankkonfiguration für die lokale SQLite-Datenbank
+# Datenbankkonfiguration für die lokale SQLite-Datenbank und pythonynanywhere
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -173,5 +178,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication'
     ]
 }

@@ -7,8 +7,9 @@ from jsonfield import JSONField
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    color = models.CharField(max_length=50)
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='user_profile')
+    color = models.CharField(max_length=50, default='black')
 
     def __str__(self):
         return self.user.username
