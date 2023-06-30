@@ -23,7 +23,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from board.serializers import TodoSerializer
-from board.serializers import UserSerializer
+from board.serializers import UserSerializer, UserProfileSerializer
 from board.models import Todo, UserProfile
 from django.views import View
 from rest_framework import status
@@ -34,10 +34,10 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 class SignupView(APIView):
     def post(self, request):
-        serializer = UserSerializer(data=request.data)
+        serializer = UserProfileSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            login(request, user)
+           # login(request, user)
             return Response({'success': True, 'user_id': user.id}, status=status.HTTP_201_CREATED)
         else:
             return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -51,7 +51,6 @@ class UserAPIView(APIView):
 
 
 class LoginUser(ObtainAuthToken):
-    # class LoginUser(APIView):
     @csrf_exempt
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(
@@ -69,41 +68,6 @@ class LoginUser(ObtainAuthToken):
             'email': user.email,
             'first_name': first_name
         })
-
-
-""" @api_view(['GET'])
-@permission_classes([AllowAny])
-@ensure_csrf_cookie
-def get_csrf_token(request):
-    return Response({'detail': 'CSRF cookie set'})
- """
-
-""" 
-class LoginUser(APIView):
-
-    def dispatch(self, request, *args, **kwargs):
-        request._dont_enforce_csrf_checks = True
-        return super().dispatch(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        username = request.data.get('email')
-        password = request.data.get('password')
-
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-
-            login(request, user)
-
-        # Token erstellen oder abrufen
-            token, created = Token.objects.get_or_create(user=user)
-
-            serializer = AuthTokenSerializer(user)
-            data = serializer.data
-            data['token'] = token.key
-
-            return Response(data, status=status.HTTP_200_OK)
-        else:
-            return Response({'non_field_errors': ['Unable to log in with provided credentials.']}, status=status.HTTP_400_BAD_REQUEST) """
 
 
 class TodoListView(APIView):

@@ -30,8 +30,4 @@ urlpatterns = [
     path('api/users/', UserAPIView.as_view(), name='user-api'),
     path('api/todos/<int:pk>/', TodoDetailView.as_view(),
          name='todo-update-delete'),
-    # path('api/todos/statusUpdate/<int:pk>/',
-    # TodoStatusUpdateView.as_view(), name='todo-status-update'),
-    # path('api/todos/update/<int:pk>/',
-    # TodoUpdateView.as_view(), name='todo-update'),
 ]
