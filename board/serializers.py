@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = ['id', 'username', 'first_name', 'password',
@@ -23,7 +22,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
-
     class Meta:
         model = UserProfile
         fields = ['color', 'user']
