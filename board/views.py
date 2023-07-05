@@ -1,25 +1,12 @@
 
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework.generics import UpdateAPIView
-from rest_framework.authentication import SessionAuthentication
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
-
-from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-
-
-from django.shortcuts import render
 
 # Create your views here.
-from django.contrib.auth.backends import BaseBackend
-from django.contrib.auth import get_user_model
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from board.serializers import TodoSerializer
@@ -28,8 +15,6 @@ from board.models import Todo, UserProfile
 from django.views import View
 from rest_framework import status
 from django.contrib.auth.models import User
-from django.http import JsonResponse
-from django.views.decorators.csrf import ensure_csrf_cookie
 
 
 class SignupView(APIView):
@@ -37,7 +22,6 @@ class SignupView(APIView):
         serializer = UserProfileSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-           # login(request, user)
             return Response({'success': True, 'user_id': user.id}, status=status.HTTP_201_CREATED)
         else:
             return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -71,7 +55,7 @@ class LoginUser(ObtainAuthToken):
 
 
 class TodoListView(APIView):
-    allowed_methods = ['get', 'post', 'patch']
+    allowed_methods = ['get', 'post']
 
     def get(self, request):
         # Standardwert auf leeren String setzen, falls kein Status angegeben ist
@@ -93,7 +77,6 @@ class TodoListView(APIView):
 
 
 class TodoDetailView(APIView):
-    allowed_methods = ['patch']
 
     def delete(self, request, pk):
         try:
